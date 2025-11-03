@@ -113,6 +113,7 @@ const PromoCodesTab = () => {
     setFormData({
       code: promoCode.code,
       discount_percentage: promoCode.discount_percentage.toString(),
+      usage_limit: promoCode.usage_limit?.toString() || "",
     });
     setShowForm(true);
   };
@@ -152,7 +153,7 @@ const PromoCodesTab = () => {
   };
 
   const resetForm = () => {
-    setFormData({ code: "", discount_percentage: "" });
+    setFormData({ code: "", discount_percentage: "", usage_limit: "" });
     setEditingCode(null);
     setShowForm(false);
   };
@@ -204,6 +205,20 @@ const PromoCodesTab = () => {
                   />
                 </div>
               </div>
+              <div>
+                <Label htmlFor="usage_limit">Usage Limit (optional)</Label>
+                <Input
+                  id="usage_limit"
+                  type="number"
+                  min="1"
+                  value={formData.usage_limit}
+                  onChange={(e) => setFormData({ ...formData, usage_limit: e.target.value })}
+                  placeholder="Leave empty for unlimited"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Maximum number of times this promo code can be used. Leave empty for unlimited usage.
+                </p>
+              </div>
               <div className="flex gap-2">
                 <Button type="submit" className="font-poppins font-bold">
                   {editingCode ? "Update" : "Create"} Promo Code
@@ -224,6 +239,8 @@ const PromoCodesTab = () => {
               <TableRow>
                 <TableHead>Code</TableHead>
                 <TableHead>Discount</TableHead>
+                <TableHead>Usage Count</TableHead>
+                <TableHead>Usage Limit</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Actions</TableHead>
@@ -234,6 +251,8 @@ const PromoCodesTab = () => {
                 <TableRow key={promoCode.id}>
                   <TableCell className="font-mono font-bold">{promoCode.code}</TableCell>
                   <TableCell>{promoCode.discount_percentage}%</TableCell>
+                  <TableCell>{promoCode.usage_count}</TableCell>
+                  <TableCell>{promoCode.usage_limit || "Unlimited"}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Switch

@@ -154,7 +154,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <main className="flex-1">
         <div className="max-w-3xl mx-auto text-center container px-4 pt-12">
-          <h2 className="text-5xl font-bold mb-6">Welcome to Freelit</h2>
+          <h2 className="text-5xl font-bold mb-6"></h2>
         </div>
         <video
           autoPlay

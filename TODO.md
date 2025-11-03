@@ -1,8 +1,13 @@
-# TODO: Product Price Management Updates
+# Promo Code Usage Tracking Implementation
 
-## Tasks
-- [x] Make main price field optional in admin ProductsTab
-- [x] Update ProductDetail to use variant prices only (ignore main price)
-- [x] Test admin form price field can be left empty
-- [x] Test product detail price updates with quantity and protein variant
-- [x] Verify cart functionality with new pricing logic
+## Completed Tasks
+- [x] Update PromoCodesTab.tsx to display usage_count and usage_limit columns
+- [x] Fix TypeScript errors in PromoCodesTab form handling
+- [x] Update CartContext to check usage limits before applying promo codes
+- [x] Update Checkout.tsx to track promo code usage after successful order
+
+## Followup Steps
+- [ ] Test the admin table displays the new columns correctly
+- [ ] Test promo code application with usage limits
+- [ ] Test checkout process tracks usage correctly
+- [ ] Verify database triggers update usage_count automatically

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 import { Heart, ShoppingCart, Minus, Plus, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -19,6 +20,7 @@ const ProductDetail = () => {
   const [user, setUser] = useState<any>(null);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [modalImageIndex, setModalImageIndex] = useState(0);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [cartQuantity, setCartQuantity] = useState(0);
   const [minOrderQuantity, setMinOrderQuantity] = useState(1);
@@ -145,6 +147,23 @@ const ProductDetail = () => {
     }
   };
 
+  const openImageModal = (index: number) => {
+    setModalImageIndex(index);
+    setIsImageModalOpen(true);
+  };
+
+  const nextModalImage = () => {
+    if (product?.images && product.images.length > 1) {
+      setModalImageIndex((prev) => (prev + 1) % product.images.length);
+    }
+  };
+
+  const prevModalImage = () => {
+    if (product?.images && product.images.length > 1) {
+      setModalImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+    }
+  };
+
 
 
   if (loading) {
@@ -161,43 +180,97 @@ const ProductDetail = () => {
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="relative">
-          <div className="w-full max-w-lg bg-white rounded-lg mb-2 mx-auto flex items-center justify-center overflow-hidden relative aspect-square">
-            {product.images && product.images.length > 0 ? (
-              <>
-                <img
-                  src={product.images[currentImageIndex]}
-                  alt={product.name}
-                  className="w-full h-full object-contain cursor-pointer"
-
-                />
-                {product.images.length > 1 && (
+          <Dialog open={isImageModalOpen} onOpenChange={setIsImageModalOpen}>
+            <DialogTrigger asChild>
+              <div className="w-full max-w-lg bg-white rounded-lg mb-2 mx-auto flex items-center justify-center overflow-hidden relative aspect-square cursor-pointer">
+                {product.images && product.images.length > 0 ? (
                   <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={prevImage}
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white border-0 rounded-full p-2 shadow-md"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={nextImage}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white border-0 rounded-full p-2 shadow-md"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-
+                    <img
+                      src={product.images[currentImageIndex]}
+                      alt={product.name}
+                      className="w-full h-full object-contain"
+                      onClick={() => openImageModal(currentImageIndex)}
+                    />
+                    {product.images.length > 1 && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            prevImage();
+                          }}
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white border-0 rounded-full p-2 shadow-md"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            nextImage();
+                          }}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white border-0 rounded-full p-2 shadow-md"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-muted-foreground">
+                    No image available
+                  </div>
+                )}
+              </div>
+            </DialogTrigger>
+            <DialogContent className="w-[90vw] max-w-4xl h-[80vh] p-0">
+              <div className="relative w-full h-full flex items-center justify-center bg-black">
+                {product.images && product.images.length > 0 && (
+                  <>
+                    <img
+                      src={product.images[modalImageIndex]}
+                      alt={product.name}
+                      className="w-full h-full object-contain"
+                    />
+                    {product.images.length > 1 && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={prevModalImage}
+                          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white border-0 rounded-full p-3 shadow-md"
+                        >
+                          <ChevronLeft className="h-6 w-6" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={nextModalImage}
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white border-0 rounded-full p-3 shadow-md"
+                        >
+                          <ChevronRight className="h-6 w-6" />
+                        </Button>
+                        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                          {product.images.map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setModalImageIndex(index)}
+                              className={cn(
+                                "w-3 h-3 rounded-full transition-all",
+                                index === modalImageIndex ? "bg-white" : "bg-white/50"
+                              )}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
-              </>
-            ) : (
-              <div className="text-muted-foreground">
-                No image available
               </div>
-            )}
-          </div>
+            </DialogContent>
+          </Dialog>
 
 
 

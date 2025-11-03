@@ -67,7 +67,14 @@ const Header = () => {
               </SheetContent>
             </Sheet>
           </div>
-          <div className="md:hidden absolute right-4 z-10">
+          <div className="md:hidden absolute right-4 z-10 flex items-center gap-2">
+            {user && (
+              <Link to="/profile">
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingBag className="h-5 w-5" />

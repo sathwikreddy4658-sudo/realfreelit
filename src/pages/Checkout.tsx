@@ -90,6 +90,31 @@ const Checkout = () => {
       return;
     }
 
+    // Track promo code usage if a promo code was applied
+    if (promoCode) {
+      try {
+        // Get promo code id first
+        const { data: promoData } = await supabase
+          .from("promo_codes")
+          .select("id")
+          .eq("code", promoCode.code)
+          .single();
+
+        if (promoData) {
+          await supabase
+            .from("promo_code_usage")
+            .insert({
+              promo_code_id: promoData.id,
+              order_id: result.order_id,
+              user_id: user.id,
+            });
+        }
+      } catch (error) {
+        console.error("Error tracking promo code usage:", error);
+        // Don't fail the order for this, just log it
+      }
+    }
+
     setProcessing(false);
     clearCart();
     setShowSuccess(true);
