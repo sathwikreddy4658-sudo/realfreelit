@@ -38,6 +38,7 @@ const Refund = () => {
             <p>The product delivered is completely different from what you ordered, or</p>
             <p>The package is damaged or tampered when it arrives.</p>
             <p>To help us verify this, please record a short unboxing video showing the sealed package before opening.</p>
+            <p>Damage and defective or replacement product will be delivered in 5-7 days.</p>
           </div>
         </div>
 
