@@ -13,7 +13,7 @@ import About from "./pages/About";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import COD from "./pages/COD";
-import Refund from "./pages/Refund";
+import Refund from "./pages/Refund-updated";
 import Shipping from "./pages/Shipping";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
