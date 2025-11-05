@@ -28,6 +28,22 @@ const Auth = () => {
       }
     };
     checkUser();
+
+    // Handle email confirmation redirect
+    const handleAuthCallback = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (data.session && !error) {
+        toast.success("Email verified successfully! Welcome to Freelit.");
+        const returnTo = location.state?.returnTo || "/";
+        navigate(returnTo);
+      }
+    };
+
+    // Check for auth callback on component mount
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('access_token') || urlParams.has('type')) {
+      handleAuthCallback();
+    }
   }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -73,7 +89,7 @@ const Auth = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
+            emailRedirectTo: `${window.location.origin}/auth`,
             data: {
               name: validationResult.data.name,
             },
