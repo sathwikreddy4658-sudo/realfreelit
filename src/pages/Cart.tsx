@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Minus, Plus, Trash2, Tag, X } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Cart = () => {
   const {
@@ -22,6 +23,13 @@ const Cart = () => {
   const navigate = useNavigate();
   const [promoInput, setPromoInput] = useState("");
   const [applyingPromo, setApplyingPromo] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
 
   const handleApplyPromo = async () => {
     if (!promoInput.trim()) return;
@@ -179,9 +187,29 @@ const Cart = () => {
               )}
             </div>
 
-            <Button className="w-full font-poppins font-bold" onClick={() => navigate("/address")}>
-              Proceed to Address Selection
-            </Button>
+            <div className="space-y-2">
+              {user ? (
+                <Button className="w-full font-poppins font-bold" onClick={() => navigate("/address")}>
+                  Proceed to Address Selection
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    className="w-full font-poppins font-bold"
+                    onClick={() => navigate("/address", { state: { isGuest: true } })}
+                  >
+                    Continue as Guest
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full font-poppins font-bold"
+                    onClick={() => navigate("/auth")}
+                  >
+                    Sign In to Account
+                  </Button>
+                </>
+              )}
+            </div>
           </Card>
         </div>
       </div>

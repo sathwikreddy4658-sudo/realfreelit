@@ -5,7 +5,7 @@
 - [x] Add Guest Checkout Validation Schemas in validation.ts
 - [x] Modify Checkout Flow for Guests in Checkout.tsx
 - [x] Update Address Selection for Guests in AddressSelection.tsx
-- [ ] Add Guest Checkout Option in Cart.tsx
+- [x] Add Guest Checkout Option in Cart.tsx
 - [ ] Update Navigation for Guests in Header.tsx
 - [ ] Create Guest Order Lookup in Orders.tsx
 - [ ] Update Order Creation Logic for Guest Orders
