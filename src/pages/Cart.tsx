@@ -179,8 +179,8 @@ const Cart = () => {
               )}
             </div>
 
-            <Button className="w-full font-poppins font-bold" onClick={() => navigate("/checkout")}>
-              Proceed to Checkout
+            <Button className="w-full font-poppins font-bold" onClick={() => navigate("/address")}>
+              Proceed to Address Selection
             </Button>
           </Card>
         </div>

@@ -15,7 +15,6 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -58,7 +57,6 @@ const Auth = () => {
           name,
           email,
           password,
-          address,
         });
 
         if (!validationResult.success) {
@@ -75,7 +73,6 @@ const Auth = () => {
             emailRedirectTo: `${window.location.origin}/`,
             data: {
               name: validationResult.data.name,
-              address: validationResult.data.address,
             },
           },
         });
@@ -113,16 +110,6 @@ const Auth = () => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
                     required
                   />
                 </div>

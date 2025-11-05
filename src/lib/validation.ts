@@ -12,10 +12,37 @@ export const signupSchema = z.object({
   password: z.string()
     .min(8, 'Password must be at least 8 characters')
     .max(72, 'Password must be less than 72 characters'),
-  address: z.string()
+});
+
+// Address validation schema
+export const addressSchema = z.object({
+  flat_no: z.string()
     .trim()
-    .min(10, 'Address must be at least 10 characters')
-    .max(500, 'Address must be less than 500 characters'),
+    .max(50, 'Flat/House number must be less than 50 characters')
+    .optional(),
+  building_name: z.string()
+    .trim()
+    .max(100, 'Building name must be less than 100 characters')
+    .optional(),
+  street_address: z.string()
+    .trim()
+    .min(5, 'Street address must be at least 5 characters')
+    .max(200, 'Street address must be less than 200 characters'),
+  city: z.string()
+    .trim()
+    .min(2, 'City must be at least 2 characters')
+    .max(50, 'City must be less than 50 characters'),
+  state: z.string()
+    .trim()
+    .min(2, 'State must be at least 2 characters')
+    .max(50, 'State must be less than 50 characters'),
+  pincode: z.string()
+    .trim()
+    .regex(/^[0-9]{6}$/, 'Pincode must be exactly 6 digits'),
+  landmark: z.string()
+    .trim()
+    .max(100, 'Landmark must be less than 100 characters')
+    .optional(),
 });
 
 export const loginSchema = z.object({

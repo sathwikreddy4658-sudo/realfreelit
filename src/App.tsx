@@ -21,6 +21,7 @@ import Auth from "./pages/Auth";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import AddressSelection from "./pages/AddressSelection";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
@@ -28,8 +29,11 @@ import AdminAuth from "./pages/admin/AdminAuth";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Blogs from "./pages/Blogs";
 import BlogDetail from "./pages/BlogDetail";
+
 const queryClient = new QueryClient();
-const App = () => <QueryClientProvider client={queryClient}>
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <CartProvider>
         <Toaster />
@@ -53,6 +57,7 @@ const App = () => <QueryClientProvider client={queryClient}>
                 <Route path="/products" element={<Products />} />
                 <Route path="/product/:name" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/address" element={<AddressSelection />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/orders" element={<Orders />} />
@@ -68,5 +73,7 @@ const App = () => <QueryClientProvider client={queryClient}>
         </BrowserRouter>
       </CartProvider>
     </TooltipProvider>
-  </QueryClientProvider>;
+  </QueryClientProvider>
+);
+
 export default App;
