@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingCart, User, LogOut, Menu, X, ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import logo from "@/assets/freelit-logo.svg";
+import logo from "@/assets/logoo.ico";
 
 const Header = () => {
   const navigate = useNavigate();

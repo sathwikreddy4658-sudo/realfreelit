@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useRef, useState } from "react";
 import animationVideo from "@/assets/freelit-animation.mp4";
 import newProteinBarImage from "@/assets/newproteinbar.jpg";
-import image2 from "@/assets/2.png";
-import image4 from "@/assets/4.png";
-import image6 from "@/assets/6.png";
-import image8 from "@/assets/8.png";
-import image10 from "@/assets/10.png";
+import image2 from "@/assets/1.png";
+import image4 from "@/assets/3.png";
+import image6 from "@/assets/5.png";
+import image8 from "@/assets/7.png";
+import image10 from "@/assets/9.png";
 import image24 from "@/assets/24.png";
 
 const Index = () => {
