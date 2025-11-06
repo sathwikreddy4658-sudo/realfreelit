@@ -446,8 +446,8 @@ const ProductDetail = () => {
         <div className="bg-[#5e4338] py-12 w-full">
           <div className="w-full">
             <div className="px-4 mb-8">
-              <h2 className="font-saira font-black text-left text-[#b5edce] uppercase">Product description:</h2>
-              <p className="font-saira font-semibold text-white mt-4">
+              <h2 className="font-saira font-black text-2xl text-left text-[#b5edce] uppercase">Product description:</h2>
+              <p className="font-saira font-semibold text-xl text-white mt-4">
                 Each Choconut Bar packs 20g of protein in just 228 calories, made with a blend of whey and pea protein.<br />
                 No refined sugar. No preservatives. No chalky chew.
               </p>
@@ -456,12 +456,82 @@ const ProductDetail = () => {
               <div className="bg-[#5e4338] border-4 border-white p-8 rounded-lg">
                 <h3 className="font-saira font-black text-2xl text-white uppercase mb-4">Inside The Bar</h3>
                 <hr className="border-white mb-4" />
-                <p className="text-white">Content to be added later...</p>
+                <ul className="text-white font-tomorrow list-disc list-inside space-y-1">
+                  <li>whey protein powder</li>
+                  <li>pea protein isolate</li>
+                  <li>date syrup</li>
+                  <li>peanut butter</li>
+                  <li>phool makhana</li>
+                  <li>water</li>
+                  <li>cocoa butter</li>
+                  <li>cocoa powder</li>
+                  <li>gum arabic</li>
+                </ul>
               </div>
               <div className="bg-[#5e4338] border-4 border-white p-8 rounded-lg">
                 <h3 className="font-saira font-black text-2xl text-white uppercase mb-4">Nutrition Info</h3>
                 <hr className="border-white mb-4" />
-                <p className="text-white">Content to be added later...</p>
+                <table className="w-full text-white font-tomorrow">
+                  <thead>
+                    <tr className="border-b border-white">
+                      <th className="text-left py-2"></th>
+                      <th className="text-center py-2">per (60 g)</th>
+                      <th className="text-center py-2">(100 g)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2">energy (kcal)</td>
+                      <td className="text-center py-2">228</td>
+                      <td className="text-center py-2">360</td>
+                    </tr>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2">protein (g)</td>
+                      <td className="text-center py-2">20</td>
+                      <td className="text-center py-2">33.5</td>
+                    </tr>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2">carbohydrates (g)</td>
+                      <td className="text-center py-2">25.2</td>
+                      <td className="text-center py-2">42.13</td>
+                    </tr>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2 pl-4">total sugars (g)</td>
+                      <td className="text-center py-2">6.8</td>
+                      <td className="text-center py-2">11.46</td>
+                    </tr>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2 pl-8">added sugars (g)</td>
+                      <td className="text-center py-2">0</td>
+                      <td className="text-center py-2">0</td>
+                    </tr>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2">fat (g)</td>
+                      <td className="text-center py-2">4.1</td>
+                      <td className="text-center py-2">6.86</td>
+                    </tr>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2 pl-4">saturated fat (g)</td>
+                      <td className="text-center py-2">1.9</td>
+                      <td className="text-center py-2">3.33</td>
+                    </tr>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2 pl-4">trans fat (g)</td>
+                      <td className="text-center py-2">0</td>
+                      <td className="text-center py-2">0</td>
+                    </tr>
+                    <tr className="border-b border-white/30">
+                      <td className="py-2">sodium (mg)</td>
+                      <td className="text-center py-2">41.4</td>
+                      <td className="text-center py-2">69</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2">cholesterol (mg)</td>
+                      <td className="text-center py-2">27.3</td>
+                      <td className="text-center py-2">45.5</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
