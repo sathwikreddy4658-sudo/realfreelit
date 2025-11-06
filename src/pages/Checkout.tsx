@@ -277,7 +277,7 @@ const Checkout = () => {
               onClick={handlePayment}
               disabled={processing}
             >
-              {processing ? "Processing..." : "Pay with Razorpay"}
+              {processing ? "Processing..." : "Go to Payment"}
             </Button>
           </Card>
         </div>
