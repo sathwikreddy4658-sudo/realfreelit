@@ -24,14 +24,14 @@ const Auth = () => {
 
     const handleAuth = async () => {
       try {
-        // Handle auth callback from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const accessToken = urlParams.get('access_token');
-        const refreshToken = urlParams.get('refresh_token');
-        const token = urlParams.get('token');
-        const type = urlParams.get('type');
-        const error = urlParams.get('error');
-        const errorDescription = urlParams.get('error_description');
+        // Handle auth callback from URL hash parameters (Supabase uses hash for tokens)
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const token = hashParams.get('token');
+        const type = hashParams.get('type');
+        const error = hashParams.get('error');
+        const errorDescription = hashParams.get('error_description');
 
         console.log('Auth callback params:', { accessToken: !!accessToken, refreshToken: !!refreshToken, token: !!token, type, error });
 
