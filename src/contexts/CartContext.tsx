@@ -84,18 +84,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const applyPromoCode = async (code: string): Promise<boolean> => {
     try {
-      // First check if the promo code can be used
-      const { data: canUse, error: checkError } = await supabase.rpc('can_use_promo_code', {
-        promo_code_text: code.toUpperCase(),
-        user_id: (await supabase.auth.getUser()).data.user?.id
-      });
+      const user = (await supabase.auth.getUser()).data.user;
+      const userId = user?.id;
 
-      if (checkError || !canUse) {
-        toast.error("Invalid promo code or usage limit exceeded");
-        return false;
+      // For authenticated users, check usage limits
+      if (userId) {
+        const { data: canUse, error: checkError } = await supabase.rpc('can_use_promo_code', {
+          promo_code_text: code.toUpperCase(),
+          user_id: userId
+        });
+
+        if (checkError || !canUse) {
+          toast.error("Invalid promo code or usage limit exceeded");
+          return false;
+        }
       }
 
-      // If valid, get the promo code details
+      // Get the promo code details (for both authenticated and guest users)
       const { data, error } = await supabase
         .from("promo_codes")
         .select("code, discount_percentage")
