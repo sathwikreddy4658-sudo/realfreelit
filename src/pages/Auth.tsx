@@ -159,7 +159,7 @@ const Auth = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth`,
+            emailRedirectTo: `https://freelit.in/auth`,
             data: {
               name: validationResult.data.name,
             },
