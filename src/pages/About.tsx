@@ -15,6 +15,7 @@ const About = () => {
           <p>Because food shouldn’t lose what matters in the name of being healthy.</p>
           <p>We don’t just use real ingredients, we rebuild the food into better versions that keep the nutrition balanced.</p>
           <p>Each Freel It product is designed to feel right, fuel better, and fit naturally into your everyday life, without extremes or empty promises.</p>
+          <p>webisite owner: Papaigari Sathwik reddy</p>
         </div>
         {/* Subtext */}
         <div className="font-saira font-black text-2xl uppercase" style={{ color: '#5e4338', borderLeft: '4px solid #b5edce', paddingLeft: '12px' }}>
