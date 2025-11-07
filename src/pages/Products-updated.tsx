@@ -32,6 +32,21 @@ const Products = () => {
     };
   }, []);
 
+  // Re-fetch products when page becomes visible (e.g., when navigating back)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchProducts();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   useEffect(() => {
     filterProducts();
   }, [products, searchQuery, categoryFilter]);

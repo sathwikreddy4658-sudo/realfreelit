@@ -9,6 +9,8 @@ import { Heart, ShoppingCart, Minus, Plus, ShoppingBag, ChevronLeft, ChevronRigh
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import ProductRatingsDisplay from "@/components/ProductRatingsDisplay";
+import RatingComponent from "@/components/RatingComponent";
 
 import image2 from "@/assets/2.png";
 import image4 from "@/assets/4.png";
@@ -443,9 +445,9 @@ const ProductDetail = () => {
 
       {/* New section for protein bars */}
       {product.category === 'protein_bars' && (
-        <div className="bg-[#5e4338] py-12 w-full">
+        <div className="bg-[#5e4338] py w-full">
           <div className="w-full">
-            <div className="px-4 mb-8">
+            <div className="px-4 mb-12 pt-8 ">
               <h2 className="font-saira font-black text-2xl text-left text-[#b5edce] uppercase">Product description:</h2>
               <p className="font-saira font-semibold text-xl text-white mt-4">
                 Each Choconut Bar packs 20g of protein in just 228 calories, made with a blend of whey and pea protein.<br />
@@ -456,7 +458,7 @@ const ProductDetail = () => {
               <div className="bg-[#5e4338] border-4 border-white p-8 rounded-lg">
                 <h3 className="font-saira font-black text-2xl text-white uppercase mb-4">Inside The Bar</h3>
                 <hr className="border-white mb-4" />
-                <ul className="text-white font-tomorrow list-disc list-inside space-y-1">
+                <ul className="text-white font-tomorrow list-disc list-inside space-y-1 md:text-lg">
                   <li>whey protein powder</li>
                   <li>pea protein isolate</li>
                   <li>date syrup</li>
@@ -532,15 +534,13 @@ const ProductDetail = () => {
                     </tr>
                   </tbody>
                 </table>
-              </div>
-            </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* New section for protein bars benefits */}
       {product.category === 'protein_bars' && (
-        <div className="bg-white py-12 w-full">
+        <div className="bg-white py-10 w-full mt-12">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-8">
               <h2 className="font-saira font-black text-3xl md:text-5xl text-[#5e4338] uppercase mb-4">
@@ -567,6 +567,21 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Rating Section */}
+      <div className="bg-[#b5edce] w-full py-12 mb-0">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <ProductRatingsDisplay productId={product.id} />
+            <div className="mt-8">
+              <RatingComponent productId={product.id} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
       )}
     </div>
   );

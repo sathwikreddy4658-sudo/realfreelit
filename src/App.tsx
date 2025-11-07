@@ -23,6 +23,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import AddressSelection from "./pages/AddressSelection";
 import Checkout from "./pages/Checkout";
+import PaymentCallback from "./pages/PaymentCallback";
 import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
 import AdminAuth from "./pages/admin/AdminAuth";
@@ -59,6 +60,7 @@ const App = () => (
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/address" element={<AddressSelection />} />
                 <Route path="/checkout" element={<Checkout />} />
+                <Route path="/payment/callback" element={<PaymentCallback />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/blogs" element={<Blogs />} />

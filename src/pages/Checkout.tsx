@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { sanitizeError } from "@/lib/errorUtils";
 import { guestCheckoutSchema } from "@/lib/validation";
+import { initiatePhonePePayment, storePaymentDetails } from "@/lib/phonepe";
 import {
   Dialog,
   DialogContent,
@@ -76,9 +77,6 @@ const Checkout = () => {
 
     setProcessing(true);
 
-    // Dummy Razorpay integration
-    const paymentId = `pay_${Math.random().toString(36).substr(2, 9)}`;
-
     // Prepare order items for atomic creation
     const orderItems = items.map(item => ({
       product_id: item.id,
@@ -97,7 +95,7 @@ const Checkout = () => {
         p_customer_phone: guestData.phone,
         p_total_price: discountedTotal,
         p_address: guestData.address,
-        p_payment_id: paymentId,
+        p_payment_id: null, // Will be updated after payment
         p_items: orderItems,
       };
     } else {
@@ -106,7 +104,7 @@ const Checkout = () => {
         p_user_id: user.id,
         p_total_price: discountedTotal,
         p_address: profile.address,
-        p_payment_id: paymentId,
+        p_payment_id: null, // Will be updated after payment
         p_items: orderItems,
       };
     }
@@ -138,6 +136,8 @@ const Checkout = () => {
       return;
     }
 
+    const orderId = result.order_id;
+
     // Track promo code usage if a promo code was applied (only for authenticated users)
     if (promoCode && !isGuestCheckout) {
       try {
@@ -153,7 +153,7 @@ const Checkout = () => {
             .from as any)("promo_code_usage")
             .insert({
               promo_code_id: promoData.id,
-              order_id: result.order_id,
+              order_id: orderId,
               user_id: user.id,
             });
         }
@@ -163,9 +163,42 @@ const Checkout = () => {
       }
     }
 
-    setProcessing(false);
-    clearCart();
-    setShowSuccess(true);
+    // Generate unique transaction ID
+    const merchantTransactionId = `MT${Date.now()}${Math.random().toString(36).substr(2, 9)}`;
+
+    // Initiate PhonePe payment
+    const paymentOptions = {
+      amount: Math.round(discountedTotal * 100), // Convert to paisa
+      merchantTransactionId,
+      merchantUserId: isGuestCheckout ? guestData.email : user.id,
+      redirectUrl: `${window.location.origin}/payment/callback?transactionId=${merchantTransactionId}&order=${orderId}`,
+      callbackUrl: `${window.location.origin}/api/payment/callback`,
+      mobileNumber: isGuestCheckout ? guestData.phone : undefined,
+      deviceContext: {
+        deviceOS: navigator.platform.includes('Mac') ? 'MAC' : 'WINDOWS'
+      }
+    };
+
+    const paymentResponse = await initiatePhonePePayment(paymentOptions);
+
+    if (paymentResponse.success && paymentResponse.data?.instrumentResponse?.redirectInfo?.url) {
+      // Store payment details
+      await storePaymentDetails(orderId, {
+        merchantTransactionId,
+        amount: paymentOptions.amount,
+        status: 'INITIATED'
+      });
+
+      // Redirect to PhonePe payment page
+      window.location.href = paymentResponse.data.instrumentResponse.redirectInfo.url;
+    } else {
+      toast({
+        title: "Payment initiation failed",
+        description: paymentResponse.message || "Unable to initiate payment. Please try again.",
+        variant: "destructive"
+      });
+      setProcessing(false);
+    }
   };
 
   if (items.length === 0) {
