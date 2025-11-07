@@ -78,8 +78,9 @@ const OrdersTab = () => {
                 <p className="text-sm text-muted-foreground">
                   Date: {new Date(order.created_at).toLocaleDateString()}
                 </p>
-                <p className="font-semibold mt-2">{order.profiles?.name}</p>
-                <p className="text-sm">{order.profiles?.email}</p>
+                <p className="font-semibold mt-2">{order.customer_name || order.profiles?.name}</p>
+                <p className="text-sm">{order.customer_email || order.profiles?.email}</p>
+                {order.customer_phone && <p className="text-sm">{order.customer_phone}</p>}
                 <p className="text-sm mt-1">{order.address}</p>
               </div>
 

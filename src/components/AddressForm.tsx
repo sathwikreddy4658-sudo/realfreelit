@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Loader2 } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { addressSchema } from "@/lib/validation";
 import { toast } from "sonner";
 
@@ -24,7 +24,7 @@ const AddressForm = ({ onAddressSubmit, initialAddress, isLoading }: AddressForm
     pincode: "",
     landmark: "",
   });
-  const [loadingLocation, setLoadingLocation] = useState(false);
+
 
   // Parse initial address if provided
   useEffect(() => {
@@ -46,64 +46,7 @@ const AddressForm = ({ onAddressSubmit, initialAddress, isLoading }: AddressForm
     }
   }, [initialAddress]);
 
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by this browser");
-      return;
-    }
 
-    setLoadingLocation(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-
-          // Use reverse geocoding to get address from coordinates
-          const response = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=demo&language=en&pretty=1`
-          );
-
-          if (!response.ok) {
-            throw new Error("Failed to get address from location");
-          }
-
-          const data = await response.json();
-          if (data.results && data.results[0]) {
-            const components = data.results[0].components;
-
-            setFormData(prev => ({
-              ...prev,
-              street_address: [components.road, components.suburb, components.neighbourhood]
-                .filter(Boolean)
-                .join(", ") || prev.street_address,
-              city: components.city || components.town || components.village || prev.city,
-              state: components.state || prev.state,
-              pincode: components.postcode || prev.pincode,
-            }));
-
-            toast.success("Location detected! Please fill in the remaining details.");
-          } else {
-            toast.error("Could not determine address from your location");
-          }
-        } catch (error) {
-          console.error("Error getting address:", error);
-          toast.error("Failed to get address from your location");
-        } finally {
-          setLoadingLocation(false);
-        }
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        toast.error("Failed to get your location. Please check your browser permissions.");
-        setLoadingLocation(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000, // 5 minutes
-      }
-    );
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,19 +173,7 @@ const AddressForm = ({ onAddressSubmit, initialAddress, isLoading }: AddressForm
             />
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={getCurrentLocation}
-              disabled={loadingLocation}
-              className="flex items-center gap-2"
-            >
-              {loadingLocation && <Loader2 className="h-4 w-4 animate-spin" />}
-              <MapPin className="h-4 w-4" />
-              Use Current Location
-            </Button>
-          </div>
+
 
           <Button
             type="submit"

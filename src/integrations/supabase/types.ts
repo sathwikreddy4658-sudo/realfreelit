@@ -96,54 +96,123 @@ export interface Database {
         }
         Relationships: []
       }
+      product_ratings: {
+        Row: {
+          id: string
+          product_id: string
+          user_id: string
+          rating: number
+          comment: string | null
+          created_at: string
+          approved: boolean | null
+        }
+        Insert: {
+          id?: string
+          product_id: string
+          user_id: string
+          rating: number
+          comment?: string | null
+          created_at?: string
+          approved?: boolean | null
+        }
+        Update: {
+          id?: string
+          product_id?: string
+          user_id?: string
+          rating?: number
+          comment?: string | null
+          created_at?: string
+          approved?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_ratings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_ratings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       products: {
         Row: {
+          allergens: string | null
+          calories: string | null
           category: string
           created_at: string
           description: string
           id: string
-          image_url: string | null
-          image_url_2: string | null
-          image_url_3: string | null
-          image_url_4: string | null
-          image_url_5: string | null
-          min_order_quantity: number
+          images: string[] | null
+          is_hidden: boolean | null
+          min_order_quantity: number | null
           name: string
-          price: number
-          price_variants: Json | null
+          nutrition: string | null
+          price: number | null
+          price_15g: number | null
+          price_20g: number | null
+          products_page_image: string | null
+          protein: string | null
+          shelf_life: string | null
+          stock: number | null
+          sugar: string | null
           updated_at: string
+          weight: string | null
+          cart_image: string | null
         }
         Insert: {
+          allergens?: string | null
+          calories?: string | null
           category: string
           created_at?: string
           description: string
           id?: string
-          image_url?: string | null
-          image_url_2?: string | null
-          image_url_3?: string | null
-          image_url_4?: string | null
-          image_url_5?: string | null
-          min_order_quantity?: number
+          images?: string[] | null
+          is_hidden?: boolean | null
+          min_order_quantity?: number | null
           name: string
-          price: number
-          price_variants?: Json | null
+          nutrition?: string | null
+          price?: number | null
+          price_15g?: number | null
+          price_20g?: number | null
+          products_page_image?: string | null
+          protein?: string | null
+          shelf_life?: string | null
+          stock?: number | null
+          sugar?: string | null
           updated_at?: string
+          weight?: string | null
+          cart_image?: string | null
         }
         Update: {
+          allergens?: string | null
+          calories?: string | null
           category?: string
           created_at?: string
           description?: string
           id?: string
-          image_url?: string | null
-          image_url_2?: string | null
-          image_url_3?: string | null
-          image_url_4?: string | null
-          image_url_5?: string | null
-          min_order_quantity?: number
+          images?: string[] | null
+          is_hidden?: boolean | null
+          min_order_quantity?: number | null
           name?: string
-          price?: number
-          price_variants?: Json | null
+          nutrition?: string | null
+          price?: number | null
+          price_15g?: number | null
+          price_20g?: number | null
+          products_page_image?: string | null
+          protein?: string | null
+          shelf_life?: string | null
+          stock?: number | null
+          sugar?: string | null
           updated_at?: string
+          weight?: string | null
+          cart_image?: string | null
         }
         Relationships: []
       }

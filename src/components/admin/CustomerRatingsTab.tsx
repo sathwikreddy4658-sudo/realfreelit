@@ -19,10 +19,6 @@ interface Rating {
   products: {
     name: string;
   };
-  profiles: {
-    full_name: string | null;
-    email: string;
-  };
 }
 
 const CustomerRatingsTab = () => {
@@ -41,12 +37,8 @@ const CustomerRatingsTab = () => {
         .from("product_ratings")
         .select(`
           *,
-          products:product_id (
+          products!product_ratings_product_id_fkey (
             name
-          ),
-          profiles:user_id (
-            full_name,
-            email
           )
         `)
         .order("created_at", { ascending: false });
@@ -189,7 +181,7 @@ const CustomerRatingsTab = () => {
                       <CardTitle className="text-lg">{rating.products?.name}</CardTitle>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-sm text-muted-foreground">
-                          By: {rating.profiles?.full_name || rating.profiles?.email || "Anonymous"}
+                          By: {rating.user_id}
                         </span>
                         <Badge variant={rating.approved ? "default" : "secondary"}>
                           {rating.approved ? "Approved" : "Pending"}

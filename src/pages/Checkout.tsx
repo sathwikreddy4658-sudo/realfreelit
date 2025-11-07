@@ -10,6 +10,8 @@ import { toast } from "@/hooks/use-toast";
 import { sanitizeError } from "@/lib/errorUtils";
 import { guestCheckoutSchema } from "@/lib/validation";
 import { initiatePhonePePayment, storePaymentDetails } from "@/lib/phonepe";
+import AddressForm from "@/components/AddressForm";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 
 const Checkout = () => {
-  const { items, totalPrice, clearCart, discountedTotal, discountAmount, promoCode } = useCart();
+  const { items, totalPrice, clearCart, discountedTotal, discountAmount, promoCode, totalWeight } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<any>(null);
@@ -35,6 +37,8 @@ const Checkout = () => {
     address: ''
   });
   const [guestErrors, setGuestErrors] = useState<any>({});
+
+
 
   useEffect(() => {
     if (!isGuestCheckout) {
@@ -58,7 +62,10 @@ const Checkout = () => {
     setProfile(data);
   };
 
+
+
   const handlePayment = async () => {
+
     if (isGuestCheckout) {
       // Validate guest data
       const validationResult = guestCheckoutSchema.safeParse(guestData);
@@ -213,78 +220,100 @@ const Checkout = () => {
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {isGuestCheckout ? (
-            <Card className="p-6 mb-4">
-              <h2 className="text-xl font-bold mb-4">Guest Information</h2>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="guest-name">Full Name</Label>
-                  <Input
-                    id="guest-name"
-                    value={guestData.name}
-                    onChange={(e) => setGuestData({ ...guestData, name: e.target.value })}
-                    className={guestErrors.name ? "border-red-500" : ""}
-                  />
-                  {guestErrors.name && <p className="text-red-500 text-sm mt-1">{guestErrors.name}</p>}
+            <>
+              <Card className="p-6 mb-4">
+                <h2 className="text-xl font-bold mb-4">Guest Information</h2>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="guest-name">Full Name</Label>
+                    <Input
+                      id="guest-name"
+                      value={guestData.name}
+                      onChange={(e) => setGuestData({ ...guestData, name: e.target.value })}
+                      className={guestErrors.name ? "border-red-500" : ""}
+                    />
+                    {guestErrors.name && <p className="text-red-500 text-sm mt-1">{guestErrors.name}</p>}
+                  </div>
+                  <div>
+                    <Label htmlFor="guest-email">Email</Label>
+                    <Input
+                      id="guest-email"
+                      type="email"
+                      value={guestData.email}
+                      onChange={(e) => setGuestData({ ...guestData, email: e.target.value })}
+                      className={guestErrors.email ? "border-red-500" : ""}
+                    />
+                    {guestErrors.email && <p className="text-red-500 text-sm mt-1">{guestErrors.email}</p>}
+                  </div>
+                  <div>
+                    <Label htmlFor="guest-phone">Phone Number</Label>
+                    <Input
+                      id="guest-phone"
+                      value={guestData.phone}
+                      onChange={(e) => setGuestData({ ...guestData, phone: e.target.value })}
+                      className={guestErrors.phone ? "border-red-500" : ""}
+                    />
+                    {guestErrors.phone && <p className="text-red-500 text-sm mt-1">{guestErrors.phone}</p>}
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="guest-email">Email</Label>
-                  <Input
-                    id="guest-email"
-                    type="email"
-                    value={guestData.email}
-                    onChange={(e) => setGuestData({ ...guestData, email: e.target.value })}
-                    className={guestErrors.email ? "border-red-500" : ""}
-                  />
-                  {guestErrors.email && <p className="text-red-500 text-sm mt-1">{guestErrors.email}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="guest-phone">Phone Number</Label>
-                  <Input
-                    id="guest-phone"
-                    value={guestData.phone}
-                    onChange={(e) => setGuestData({ ...guestData, phone: e.target.value })}
-                    className={guestErrors.phone ? "border-red-500" : ""}
-                  />
-                  {guestErrors.phone && <p className="text-red-500 text-sm mt-1">{guestErrors.phone}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="guest-address">Delivery Address</Label>
-                  <textarea
-                    id="guest-address"
-                    value={guestData.address}
-                    onChange={(e) => setGuestData({ ...guestData, address: e.target.value })}
-                    className={`w-full p-2 border rounded-md ${guestErrors.address ? "border-red-500" : "border-gray-300"}`}
-                    rows={3}
-                  />
-                  {guestErrors.address && <p className="text-red-500 text-sm mt-1">{guestErrors.address}</p>}
-                </div>
-              </div>
-            </Card>
+              </Card>
+
+              <Card className="p-6 mb-4">
+                <AddressForm
+                  onAddressSubmit={(address) => setGuestData({ ...guestData, address })}
+                  initialAddress={guestData.address}
+                />
+              </Card>
+            </>
           ) : (
-            <Card className="p-6 mb-4">
-              <h2 className="text-xl font-bold mb-4">Delivery Address</h2>
-              <p>{profile?.name}</p>
-              <p>{profile?.email}</p>
-              <p className="mt-2">{profile?.address}</p>
-            </Card>
+            <>
+              <Card className="p-6 mb-4">
+                <h2 className="text-xl font-bold mb-4">Delivery Address</h2>
+                <AddressForm
+                  onAddressSubmit={(address) => {
+                    // Update profile address in database
+                    supabase
+                      .from("profiles" as any)
+                      .update({ address })
+                      .eq("id", user.id);
+                    setProfile({ ...profile, address });
+                  }}
+                  initialAddress={profile?.address}
+                />
+              </Card>
+            </>
           )}
 
-          <Card className="p-6">
+
+        </div>
+
+        <div>
+          <Card className="p-6 mb-4">
             <h2 className="text-xl font-bold mb-4">Order Items</h2>
             <div className="space-y-3">
               {items.map((item) => (
-                <div key={item.id} className="flex justify-between">
-                  <span>
-                    {item.name} × {item.quantity}
-                  </span>
-                  <span>₹{item.price * item.quantity}</span>
+                <div key={`${item.id}-${item.protein}`} className="flex items-center gap-3 p-3 border rounded-lg">
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-12 h-12 object-cover rounded-md flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm">{item.name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {item.protein} × {item.quantity}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium">₹{item.price * item.quantity}</div>
+                  </div>
                 </div>
               ))}
             </div>
           </Card>
-        </div>
 
-        <div>
           <Card className="p-6 sticky top-4">
             <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
 

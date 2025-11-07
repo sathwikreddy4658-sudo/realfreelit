@@ -10,6 +10,7 @@ export interface CartItem {
   stock: number;
   image?: string;
   protein: string;
+  weight?: number; // Weight in grams
 }
 
 interface PromoCode {
@@ -25,6 +26,7 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  totalWeight: number;
   promoCode: PromoCode | null;
   applyPromoCode: (code: string) => Promise<boolean>;
   removePromoCode: () => void;
@@ -130,6 +132,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalWeight = items.reduce((sum, item) => sum + (item.weight || 0) * item.quantity, 0);
   const discountAmount = promoCode ? (totalPrice * promoCode.discount_percentage) / 100 : 0;
   const discountedTotal = totalPrice - discountAmount;
 
@@ -143,6 +146,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         totalItems,
         totalPrice,
+        totalWeight,
         promoCode,
         applyPromoCode,
         removePromoCode,
