@@ -35,10 +35,9 @@ const Refund = () => {
             You may request a refund or replacement only if:
           </div>
           <div className="font-poppins font-light text-base space-y-2" style={{ color: '#5e4338' }}>
-            <p>The product delivered is completely different from what you ordered, or</p>
-            <p>The package is damaged or tampered when it arrives.</p>
+            <p>The product delivered is completely different from what you ordered</p>
             <p>To help us verify this, please record a short unboxing video showing the sealed package before opening.</p>
-            <p>Damage and defective or replacement product will be delivered in 5-7 days.</p>
+            <p>Replacement product will be delivered in 5-7 days.</p>
           </div>
         </div>
 
