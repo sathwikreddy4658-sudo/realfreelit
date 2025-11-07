@@ -232,7 +232,7 @@ const ProductDetail = () => {
                 )}
               </div>
             </DialogTrigger>
-            <DialogContent className="w-[90vw] max-w-4xl h-[80vh] p-0">
+            <DialogContent className="w-[90vw] max-w-4xl h-[80vh] p-0 md:max-w-[18rem] md:h-[20vh]">
               <div className="relative w-full h-full flex items-center justify-center bg-black">
                 {product.images && product.images.length > 0 && (
                   <>
@@ -279,17 +279,15 @@ const ProductDetail = () => {
             </DialogContent>
           </Dialog>
 
-
-
-          {/* Mobile: Thumbnails below image section */}
+          {/* Mobile: Thumbnails below image */}
           {product.images && product.images.length > 1 && (
-            <div className="md:hidden flex gap-3 mt-4 overflow-x-auto pb-2 justify-center">
+            <div className="flex md:hidden gap-3 mt-4 overflow-x-auto pb-2 justify-start">
               {product.images.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
                   className={cn(
-                    "flex-shrink-0 w-20 h-20 rounded border-2 overflow-hidden transition-all",
+                    "flex-shrink-0 w-12 h-12 rounded border-2 overflow-hidden transition-all",
                     index === currentImageIndex ? "border-[#5e4338] ring-2 ring-[#5e4338]/30" : "border-gray-300 hover:border-gray-400"
                   )}
                 >
@@ -302,6 +300,7 @@ const ProductDetail = () => {
               ))}
             </div>
           )}
+
         </div>
 
         <div>
@@ -437,15 +436,16 @@ const ProductDetail = () => {
             </div>
           )}
 
-
         </div>
       </div>
+
+
 
       </div>
 
       {/* New section for protein bars */}
       {product.category === 'protein_bars' && (
-        <div className="bg-[#5e4338] py w-full">
+        <div className="bg-[#5e4338] py-4 w-full">
           <div className="w-full">
             <div className="px-4 mb-12 pt-8 ">
               <h2 className="font-saira font-black text-2xl text-left text-[#b5edce] uppercase">Product description:</h2>
@@ -534,13 +534,15 @@ const ProductDetail = () => {
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* New section for protein bars benefits */}
       {product.category === 'protein_bars' && (
-        <div className="bg-white py-10 w-full mt-12">
+        <div className="bg-white py-10 w-full mt">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-8">
               <h2 className="font-saira font-black text-3xl md:text-5xl text-[#5e4338] uppercase mb-4">
@@ -581,8 +583,6 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      </div>
-      )}
     </div>
   );
 };
