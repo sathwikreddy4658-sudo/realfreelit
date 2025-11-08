@@ -79,7 +79,7 @@ const RatingComponent = ({ productId }: RatingComponentProps) => {
 
         if (error) throw error;
 
-        toast({ title: "Rating updated successfully! It will be visible after admin approval." });
+        toast({ title: "Rating updated successfully!" });
       } else {
         // Insert new rating
         const { error } = await supabase
@@ -88,13 +88,11 @@ const RatingComponent = ({ productId }: RatingComponentProps) => {
 
         if (error) throw error;
 
-        toast({ title: "Rating submitted successfully! It will be visible after admin approval." });
+        toast({ title: "Rating submitted successfully!" });
       }
 
-      // Reset form
-      setRating(0);
-      setComment("");
-      setExistingRating(null);
+      // Refresh existing rating data
+      await fetchExistingRating();
     } catch (error: any) {
       toast({ title: "Error submitting rating", variant: "destructive" });
       console.error("Rating submission error:", error);
@@ -111,7 +109,7 @@ const RatingComponent = ({ productId }: RatingComponentProps) => {
           <h3 className="font-saira font-bold text-lg text-[#5e4338] mb-2">Rate This Product</h3>
           <p className="text-muted-foreground mb-4">Please sign in to leave a rating and comment.</p>
           <Button
-            onClick={() => window.location.href = "/auth"}
+            onClick={() => window.location.href = `/auth?returnTo=${encodeURIComponent(window.location.pathname)}`}
             className="bg-[#5e4338] hover:bg-[#4a3428] text-white"
           >
             Sign In

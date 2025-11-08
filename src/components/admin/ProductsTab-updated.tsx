@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Upload, X } from "lucide-react";
+import { Pencil, Trash2, Upload, X, Crop, RotateCcw, RotateCw } from "lucide-react";
 import { productSchema } from "@/lib/validation";
+import ImageCropper from "@/components/ImageCropper";
 
 const ProductsTab = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -38,6 +39,11 @@ const ProductsTab = () => {
   });
   const [productsPageImageFile, setProductsPageImageFile] = useState<File | null>(null);
   const [cartImageFile, setCartImageFile] = useState<File | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const [cropperImage, setCropperImage] = useState<File | null>(null);
+  const [cropperAspect, setCropperAspect] = useState<number>(1);
+  const [cropperType, setCropperType] = useState<'products' | 'cart' | 'general' | null>(null);
+  const [cropperIndex, setCropperIndex] = useState<number>(-1);
 
   useEffect(() => {
     fetchProducts();
@@ -75,29 +81,44 @@ const ProductsTab = () => {
     setExistingImages([]);
     setProductsPageImageFile(null);
     setCartImageFile(null);
+    setShowCropper(false);
+    setCropperImage(null);
+    setCropperType(null);
+    setCropperIndex(-1);
   };
 
   const uploadImages = async (productId: string): Promise<string[]> => {
     const uploadedUrls: string[] = [];
 
-    for (const file of imageFiles) {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${productId}/${Date.now()}-${Math.random()}.${fileExt}`;
+    // Upload images in parallel batches of 3 to avoid overwhelming the server
+    const batchSize = 3;
+    for (let i = 0; i < imageFiles.length; i += batchSize) {
+      const batch = imageFiles.slice(i, i + batchSize);
+      const batchPromises = batch.map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${productId}/${Date.now()}-${Math.random()}.${fileExt}`;
 
-      const { error: uploadError, data } = await supabase.storage
-        .from('product-images')
-        .upload(fileName, file);
+        const { error: uploadError, data } = await supabase.storage
+          .from('product-images')
+          .upload(fileName, file, {
+            cacheControl: '3600', // Add caching for better performance
+            upsert: false
+          });
 
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        continue;
-      }
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          return null;
+        }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(fileName);
+        const { data: { publicUrl } } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(fileName);
 
-      uploadedUrls.push(publicUrl);
+        return publicUrl;
+      });
+
+      const batchResults = await Promise.all(batchPromises);
+      uploadedUrls.push(...batchResults.filter(url => url !== null));
     }
 
     return uploadedUrls;
@@ -136,6 +157,39 @@ const ProductsTab = () => {
 
   const removeExistingImage = (index: number) => {
     setExistingImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const openCropper = (file: File, type: 'products' | 'cart' | 'general', index: number = -1) => {
+    setCropperImage(file);
+    setCropperType(type);
+    setCropperIndex(index);
+    setCropperAspect(type === 'products' ? 1 : type === 'cart' ? 1 : 1);
+    setShowCropper(true);
+  };
+
+  const handleCropComplete = (croppedFile: File) => {
+    if (cropperType === 'products') {
+      setProductsPageImageFile(croppedFile);
+    } else if (cropperType === 'cart') {
+      setCartImageFile(croppedFile);
+    } else if (cropperType === 'general' && cropperIndex >= 0) {
+      setImageFiles(prev => {
+        const newFiles = [...prev];
+        newFiles[cropperIndex] = croppedFile;
+        return newFiles;
+      });
+    }
+    setShowCropper(false);
+    setCropperImage(null);
+    setCropperType(null);
+    setCropperIndex(-1);
+  };
+
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setCropperImage(null);
+    setCropperType(null);
+    setCropperIndex(-1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -453,13 +507,13 @@ const ProductsTab = () => {
                     onChange={(e) => setFormData({ ...formData, shelf_life: e.target.value })}
                   />
                 </div>
-              <div>
-                <Label>Allergens</Label>
-                <Input
-                  value={formData.allergens}
-                  onChange={(e) => setFormData({ ...formData, allergens: e.target.value })}
-                />
-              </div>
+                <div>
+                  <Label>Allergens</Label>
+                  <Input
+                    value={formData.allergens}
+                    onChange={(e) => setFormData({ ...formData, allergens: e.target.value })}
+                  />
+                </div>
               </div>
 
               <div className="flex items-center space-x-2">
@@ -524,15 +578,26 @@ const ProductsTab = () => {
                               alt={`New ${index + 1}`}
                               className="w-full h-20 object-cover rounded"
                             />
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="destructive"
-                              className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
-                              onClick={() => removeImageFile(index)}
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
+                            <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="secondary"
+                                className="h-6 w-6 p-0 bg-white hover:bg-gray-100 text-black border shadow-sm"
+                                onClick={() => openCropper(file, 'general', index)}
+                              >
+                                <Crop className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="destructive"
+                                className="h-6 w-6 p-0 shadow-sm"
+                                onClick={() => removeImageFile(index)}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -641,6 +706,15 @@ const ProductsTab = () => {
           </Card>
         ))}
       </div>
+
+      {showCropper && cropperImage && (
+        <ImageCropper
+          imageFile={cropperImage}
+          aspect={cropperAspect}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   );
 };

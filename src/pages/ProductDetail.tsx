@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import ProductRatingsDisplay from "@/components/ProductRatingsDisplay";
 import RatingComponent from "@/components/RatingComponent";
+import ProductRatingSummary from "@/components/ProductRatingSummary";
 
 import image2 from "@/assets/2.png";
 import image4 from "@/assets/4.png";
@@ -575,10 +576,28 @@ const ProductDetail = () => {
       <div className="bg-[#b5edce] w-full py-12 mb-0">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <ProductRatingsDisplay productId={product.id} />
-            <div className="mt-8">
-              <RatingComponent productId={product.id} />
+            <div className="flex flex-col items-center justify-center mb-6 w-full">
+              <ProductRatingSummary productId={product.id} />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-[#5e4338] hover:bg-[#4a3528] text-white font-saira font-black uppercase px-6 py-3 mt-4">
+                    Rate This Product
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <RatingComponent productId={product.id} />
+                </DialogContent>
+              </Dialog>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Customer Reviews Section */}
+      <div className="bg-white w-full py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <ProductRatingsDisplay productId={product.id} />
           </div>
         </div>
       </div>

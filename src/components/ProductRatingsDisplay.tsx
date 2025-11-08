@@ -10,7 +10,7 @@ interface Rating {
   comment: string | null;
   created_at: string;
   profiles: {
-    full_name: string | null;
+    name: string | null;
   };
 }
 
@@ -35,9 +35,7 @@ const ProductRatingsDisplay = ({ productId }: ProductRatingsDisplayProps) => {
           rating,
           comment,
           created_at,
-          profiles:user_id (
-            full_name
-          )
+          user_id
         `)
         .eq("product_id", productId)
         .eq("approved", true)
@@ -45,7 +43,23 @@ const ProductRatingsDisplay = ({ productId }: ProductRatingsDisplayProps) => {
 
       if (error) throw error;
 
-      setRatings(data || []);
+      // Fetch user profiles separately
+      const ratingsWithProfiles = await Promise.all(
+        (data || []).map(async (rating) => {
+          const { data: profile } = await supabase
+            .from("profiles" as any)
+            .select("name")
+            .eq("id", rating.user_id)
+            .single();
+
+          return {
+            ...rating,
+            profiles: profile ? { name: (profile as any).name } : { name: null }
+          };
+        })
+      );
+
+      setRatings(ratingsWithProfiles);
     } catch (error: any) {
       console.error("Error fetching ratings:", error);
     } finally {
@@ -79,36 +93,36 @@ const ProductRatingsDisplay = ({ productId }: ProductRatingsDisplayProps) => {
 
   return (
     <div className="mt-8">
-      <h3 className="font-saira font-bold text-xl text-[#5e4338] mb-4">Customer Reviews</h3>
+      <h3 className="font-saira font-bold text-xl text-[#5e4338] mb-6">Customer Reviews</h3>
 
-      <div className="overflow-x-auto pb-4">
-        <div className="flex gap-4 min-w-max">
-          {ratings.map((rating) => (
-            <Card key={rating.id} className="flex-shrink-0 w-80 p-4 bg-white border-2 border-[#5e4338]/20">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-[#5e4338]" />
-                    <span className="font-medium text-sm text-[#5e4338]">
-                      {rating.profiles?.full_name || "Anonymous"}
-                    </span>
-                  </div>
-                  {renderStars(rating.rating)}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {ratings.map((rating) => (
+          <Card key={rating.id} className="p-6 bg-[#b5edce]/30 border-2 border-[#3b2a20]/20">
+            <div className="space-y-4">
+              <div className="flex justify-end">
+                {renderStars(rating.rating)}
+              </div>
+
+              {rating.comment && (
+                <p className="font-saira font-medium text-base text-[#3b2a20] leading-relaxed">
+                  "{rating.comment}"
+                </p>
+              )}
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <User className="h-6 w-6 text-[#3b2a20]" />
+                  <span className="font-poppins font-bold text-base text-[#3b2a20]">
+                    {rating.profiles?.name || "Anonymous"}
+                  </span>
                 </div>
-
-                {rating.comment && (
-                  <p className="text-sm text-gray-700 italic">
-                    "{rating.comment}"
-                  </p>
-                )}
-
-                <div className="text-xs text-muted-foreground">
+                <div className="text-sm text-[#3b2a20]/70 font-medium">
                   {new Date(rating.created_at).toLocaleDateString()}
                 </div>
               </div>
-            </Card>
-          ))}
-        </div>
+            </div>
+          </Card>
+        ))}
       </div>
     </div>
   );

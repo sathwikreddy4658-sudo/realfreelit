@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { signupSchema, loginSchema } from "@/lib/validation";
 import { sanitizeError } from "@/lib/errorUtils";
+import logo from "@/assets/loo.png";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -58,7 +59,9 @@ const Auth = () => {
             toast.success("Email verified successfully! Welcome to Freelit.");
             // Clear URL parameters
             window.history.replaceState({}, document.title, window.location.pathname);
-            const returnTo = location.state?.returnTo || "/";
+            // Check for returnTo in URL params first, then fall back to location state
+            const urlParams = new URLSearchParams(window.location.search);
+            const returnTo = urlParams.get('returnTo') || location.state?.returnTo || "/";
             navigate(returnTo, { replace: true });
           }
         } else if (token && type) {
@@ -76,7 +79,9 @@ const Auth = () => {
             toast.success("Email verified successfully! Welcome to Freelit.");
             // Clear URL parameters
             window.history.replaceState({}, document.title, window.location.pathname);
-            const returnTo = location.state?.returnTo || "/";
+            // Check for returnTo in URL params first, then fall back to location state
+            const urlParams = new URLSearchParams(window.location.search);
+            const returnTo = urlParams.get('returnTo') || location.state?.returnTo || "/";
             navigate(returnTo, { replace: true });
           }
         } else {
@@ -84,7 +89,9 @@ const Auth = () => {
           const { data: { session } } = await supabase.auth.getSession();
           if (session && mounted) {
             console.log('User already authenticated:', session.user.email);
-            const returnTo = location.state?.returnTo || "/";
+            // Check for returnTo in URL params first, then fall back to location state
+            const urlParams = new URLSearchParams(window.location.search);
+            const returnTo = urlParams.get('returnTo') || location.state?.returnTo || "/";
             navigate(returnTo, { replace: true });
           }
         }
@@ -102,7 +109,9 @@ const Auth = () => {
 
       if (event === 'SIGNED_IN' && session && mounted) {
         toast.success("Email verified successfully! Welcome to Freelit.");
-        const returnTo = location.state?.returnTo || "/";
+        // Check for returnTo in URL params first, then fall back to location state
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get('returnTo') || location.state?.returnTo || "/";
         navigate(returnTo, { replace: true });
       } else if (event === 'SIGNED_OUT' && mounted) {
         // Handle sign out if needed
@@ -114,7 +123,7 @@ const Auth = () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, location]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,7 +147,9 @@ const Auth = () => {
 
         if (error) throw error;
         toast.success("Welcome back!");
-        const returnTo = location.state?.returnTo || "/";
+        // Check for returnTo in URL params first, then fall back to location state
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get('returnTo') || location.state?.returnTo || "/";
         navigate(returnTo);
       } else {
         // Validate signup data
@@ -181,9 +192,12 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-secondary p-4">
       <Card className="w-full max-w-md">
-        <CardHeader>
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <img src={logo} alt="Freelit Logo" className="w-[150px] h-[150px] object-contain" />
+          </div>
           <CardTitle className="text-2xl font-bold">
-            {isLogin ? "Welcome to Freelit" : "Join Freelit"}
+            {isLogin ? "Welcome Back" : "Join Freelit"}
           </CardTitle>
           <CardDescription>
             {isLogin ? "Sign in to your account" : "Create your account"}

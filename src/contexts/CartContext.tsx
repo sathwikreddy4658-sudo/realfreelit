@@ -67,6 +67,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
       return [...prev, { ...item, quantity: item.quantity || 1, protein: item.protein || "15g" }];
     });
+    toast.success("Added to cart");
   };
 
   const removeItem = (id: string, protein: string) => {
@@ -91,13 +92,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       // For authenticated users, check usage limits
       if (userId) {
-        const { data: canUse, error: checkError } = await supabase.rpc('can_use_promo_code', {
-          promo_code_text: code.toUpperCase(),
-          user_id: userId
-        });
+        const { data: canUse, error: checkError } = await supabase
+          .from("promo_codes")
+          .select("usage_count, usage_limit")
+          .eq("code", code.toUpperCase())
+          .eq("active", true)
+          .single();
 
         if (checkError || !canUse) {
           toast.error("Invalid promo code or usage limit exceeded");
+          return false;
+        }
+
+        // Check if usage limit is exceeded
+        if (canUse.usage_limit && canUse.usage_count >= canUse.usage_limit) {
+          toast.error("Promo code usage limit exceeded");
           return false;
         }
       }

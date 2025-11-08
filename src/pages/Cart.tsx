@@ -203,7 +203,7 @@ const Cart = () => {
                   <Button
                     variant="outline"
                     className="w-full font-poppins font-bold"
-                    onClick={() => navigate("/auth", { state: { returnTo: "/cart" } })}
+                    onClick={() => window.location.href = `/auth?returnTo=${encodeURIComponent(window.location.pathname)}`}
                   >
                     Sign In & Order
                   </Button>

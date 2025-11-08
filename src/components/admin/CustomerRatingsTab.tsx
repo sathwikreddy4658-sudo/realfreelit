@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Star, Eye, Trash2, Check, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Star, Eye, Trash2, Check, X, Edit } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +27,8 @@ const CustomerRatingsTab = () => {
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
+  const [editingRating, setEditingRating] = useState<Rating | null>(null);
+  const [editedComment, setEditedComment] = useState("");
 
   useEffect(() => {
     fetchRatings();
@@ -112,6 +116,32 @@ const CustomerRatingsTab = () => {
     } catch (error: any) {
       toast({ title: "Error deleting rating", variant: "destructive" });
       console.error("Error deleting rating:", error);
+    }
+  };
+
+  const handleEdit = (rating: Rating) => {
+    setEditingRating(rating);
+    setEditedComment(rating.comment || "");
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingRating) return;
+
+    try {
+      const { error } = await supabase
+        .from("product_ratings")
+        .update({ comment: editedComment })
+        .eq("id", editingRating.id);
+
+      if (error) throw error;
+
+      toast({ title: "Rating comment updated successfully" });
+      setEditingRating(null);
+      setEditedComment("");
+      fetchRatings();
+    } catch (error: any) {
+      toast({ title: "Error updating rating comment", variant: "destructive" });
+      console.error("Error updating rating comment:", error);
     }
   };
 
@@ -215,6 +245,45 @@ const CustomerRatingsTab = () => {
                           </Button>
                         </>
                       )}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEdit(rating)}
+                            className="text-blue-600 hover:text-blue-700"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Edit Rating Comment</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <Textarea
+                              value={editedComment}
+                              onChange={(e) => setEditedComment(e.target.value)}
+                              placeholder="Edit the rating comment..."
+                              rows={4}
+                            />
+                            <div className="flex gap-2 justify-end">
+                              <Button
+                                variant="outline"
+                                onClick={() => {
+                                  setEditingRating(null);
+                                  setEditedComment("");
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                              <Button onClick={handleSaveEdit}>
+                                Save Changes
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                       <Button
                         size="sm"
                         variant="outline"
