@@ -216,7 +216,7 @@ const Index = () => {
               <Link to="/product/CHOCO NUT">
                 <Button size="lg" className="bg-white text-black hover:bg-[#5e4338] hover:text-white font-poppins font-bold">SHOP NOW</Button>
               </Link>
-              <Link to="/auth">
+              <Link to="/auth?mode=signup">
                 <Button size="lg" variant="outline" className="bg-white text-black border-white hover:bg-[#5e4338] hover:text-white hover:border-[#5e4338] font-poppins font-bold">SIGN UP</Button>
               </Link>
             </div>
