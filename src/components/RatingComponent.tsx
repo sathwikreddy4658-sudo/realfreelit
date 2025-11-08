@@ -115,16 +115,8 @@ const RatingComponent = ({ productId }: RatingComponentProps) => {
       <Card className="p-6 bg-white border-2 border-[#5e4338]/20">
         <div className="text-center">
           <MessageSquare className="mx-auto h-12 w-12 text-[#5e4338] mb-4" />
-          <Button
-            onClick={() => {
-              const currentUrl = window.location.href;
-              window.location.href = `/auth?redirectTo=${encodeURIComponent(currentUrl)}`;
-            }}
-            className="bg-[#5e4338] hover:bg-[#4a3428] text-white mb-2"
-          >
-            Sign In To Write A Review
-          </Button>
-          <p className="text-muted-foreground text-sm">Please sign in to leave a rating and comment.</p>
+          <h3 className="font-saira font-bold text-lg text-[#5e4338] mb-2">Rate This Product</h3>
+          <p className="text-muted-foreground">Please sign in to leave a rating and comment.</p>
         </div>
       </Card>
     );
