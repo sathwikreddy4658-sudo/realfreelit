@@ -21,6 +21,13 @@ const Auth = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Check URL parameters for mode
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    if (mode === 'signup') {
+      setIsLogin(false);
+    }
+
     let mounted = true;
 
     const handleAuth = async () => {
