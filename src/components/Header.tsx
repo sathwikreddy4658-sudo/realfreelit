@@ -58,9 +58,14 @@ const Header = () => {
                     <Button variant="ghost" className="text-white hover:bg-white/10 font-poppins font-bold text-lg py-6 w-full justify-start border-b border-white/20">About Us</Button>
                   </Link>
                   {user ? (
-                    <Link to="/orders" onClick={() => setIsOpen(false)}>
-                      <Button variant="ghost" className="text-white hover:bg-white/10 font-poppins font-bold text-lg py-6 w-full justify-start border-b border-white/20">My Orders</Button>
-                    </Link>
+                    <>
+                      <Link to="/orders" onClick={() => setIsOpen(false)}>
+                        <Button variant="ghost" className="text-white hover:bg-white/10 font-poppins font-bold text-lg py-6 w-full justify-start border-b border-white/20">My Orders</Button>
+                      </Link>
+                      <Link to="/profile" onClick={() => setIsOpen(false)}>
+                        <Button variant="ghost" className="text-white hover:bg-white/10 font-poppins font-bold text-lg py-6 w-full justify-start border-b border-white/20">Profile</Button>
+                      </Link>
+                    </>
                   ) : (
                     <Link to="/auth" onClick={() => setIsOpen(false)}>
                       <Button variant="ghost" className="text-white hover:bg-white/10 font-poppins font-bold text-lg py-6 w-full justify-start border-b border-white/20">Sign In</Button>
@@ -72,16 +77,9 @@ const Header = () => {
           </div>
           <div className="md:hidden absolute right-4 z-10 flex items-center gap-2">
             {user && (
-              <>
-                <Link to="/profile">
-                  <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </Link>
-                <Button variant="ghost" size="icon" onClick={handleLogout}>
-                  <LogOut className="h-5 w-5" />
-                </Button>
-              </>
+              <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <LogOut className="h-5 w-5" />
+              </Button>
             )}
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
